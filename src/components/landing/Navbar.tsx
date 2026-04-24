@@ -1,0 +1,150 @@
+"use client";
+
+import * as React from "react";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from "framer-motion";
+import { Menu, X } from "lucide-react";
+
+import { useLenis } from "@/lib/lenis-provider";
+
+const nav = [
+  { href: "#home", label: "Home" },
+  { href: "#services", label: "Services" },
+  { href: "#expertise", label: "Expertise" },
+  { href: "#about", label: "About" },
+  { href: "#contact", label: "Contact" },
+] as const;
+
+export function Navbar() {
+  const { scrollY } = useScroll();
+  const { scrollTo } = useLenis();
+  const [scrolled, setScrolled] = React.useState(false);
+  const [active, setActive] = React.useState("#home");
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const scrollProgress = useSpring(scrollY, { stiffness: 120, damping: 30 });
+  const [progress, setProgress] = React.useState(0);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setScrolled(latest > 16);
+  });
+
+  useMotionValueEvent(scrollProgress, "change", (latest) => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    setProgress(h > 0 ? Math.min(1, Math.max(0, latest / h)) : 0);
+  });
+
+  React.useEffect(() => {
+    const sections = nav
+      .map((n) => document.querySelector(n.href))
+      .filter(Boolean) as Element[];
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0))[0];
+        if (visible?.target?.id) setActive(`#${visible.target.id}`);
+      },
+      { threshold: [0.25, 0.4, 0.6], rootMargin: "-35% 0px -55% 0px" }
+    );
+
+    sections.forEach((s) => obs.observe(s));
+    return () => obs.disconnect();
+  }, []);
+
+  function onNavClick(href: string) {
+    setMobileOpen(false);
+    scrollTo(href);
+  }
+
+  return (
+    <motion.header
+      className="fixed inset-x-0 top-0 z-50"
+      initial={false}
+      animate={scrolled ? "solid" : "clear"}
+      variants={{
+        clear: { backdropFilter: "blur(0px)", backgroundColor: "rgba(10,14,26,0)" },
+        solid: {
+          backdropFilter: "blur(12px)",
+          backgroundColor: "rgba(10,14,26,0.65)",
+        },
+      }}
+      transition={{ duration: 0.25 }}
+    >
+      <div className="fixed left-0 right-0 top-0 z-50 h-[2px] bg-transparent">
+        <div className="h-full bg-[#00c4b4]" style={{ width: `${progress * 100}%` }} />
+      </div>
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <button type="button" onClick={() => onNavClick("#home")} className="flex items-center gap-2 text-left">
+          <span className="text-sm font-semibold tracking-tight">Noralixlabs</span>
+        </button>
+
+        <nav className="hidden items-center gap-6 text-sm text-white/80 md:flex">
+          {nav.map((item) => (
+            <button
+              key={item.href}
+              type="button"
+              onClick={() => onNavClick(item.href)}
+              className={
+                "transition-colors hover:text-white " +
+                (active === item.href ? "text-[#00c4b4]" : "")
+              }
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onNavClick("#contact")}
+            className="inline-flex h-10 items-center justify-center rounded-full border border-[#00c4b4]/50 bg-white/0 px-4 text-sm font-medium text-white shadow-[0_0_0_0_rgba(0,196,180,0.0)] transition hover:border-[#00c4b4] hover:shadow-[0_0_32px_rgba(0,196,180,0.25)]"
+          >
+            Get in Touch
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMobileOpen((v) => !v)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 md:hidden"
+            aria-label="Menu"
+          >
+            {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {mobileOpen ? (
+          <motion.div
+            className="border-t border-white/10 bg-[#0a0e1a]/90 backdrop-blur md:hidden"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
+            <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6">
+              <div className="grid gap-2">
+                {nav.map((item) => (
+                  <button
+                    key={item.href}
+                    type="button"
+                    onClick={() => onNavClick(item.href)}
+                    className={
+                      "rounded-2xl px-3 py-3 text-left text-sm text-white/80 hover:bg-white/5 hover:text-white " +
+                      (active === item.href ? "text-[#00c4b4]" : "")
+                    }
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </motion.header>
+  );
+}
+

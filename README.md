@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Noralix Labs website
+
+Modern, high-trust marketing website for **Noralix Labs** built with Next.js + Tailwind + shadcn/ui.
 
 ## Getting Started
 
@@ -6,31 +8,52 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a `.env.local` file in the project root:
 
-## Learn More
+```bash
+# Public base URL (used for metadata, sitemap, robots)
+NEXT_PUBLIC_SITE_URL=https://noralixlabs.com
 
-To learn more about Next.js, take a look at the following resources:
+# Form provider endpoints (email-forwarding service)
+# Example: Formspree endpoint URL for each form
+NEXT_PUBLIC_CONTACT_FORM_URL=
+NEXT_PUBLIC_RFQ_FORM_URL=
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Lead capture (email forwarding)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Contact** page posts to `NEXT_PUBLIC_CONTACT_FORM_URL`
+- **RFQ** page posts to `NEXT_PUBLIC_RFQ_FORM_URL`
+- Both forms include a simple **honeypot** field (`_gotcha`) to reduce spam.
 
-## Deploy on Vercel
+Recommended providers:
+- **Formspree** or **Basin** (easy setup + deliverability + dashboard)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment (Vercel)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Push this repo to GitHub/GitLab.
+- Create a new project on Vercel and import the repo.
+- Set environment variables in Vercel Project Settings:
+  - `NEXT_PUBLIC_SITE_URL`
+  - `NEXT_PUBLIC_CONTACT_FORM_URL`
+  - `NEXT_PUBLIC_RFQ_FORM_URL`
+- Deploy.
+
+## Connect `noralixlabs.com` domain
+
+In your DNS provider:
+- Add `A` record for apex (`@`) pointing to Vercel’s IP (Vercel will show the exact value), **or** use the DNS records Vercel provides.
+- Add `CNAME` for `www` pointing to Vercel (value provided in Vercel UI).
+- Wait for DNS propagation, then enable HTTPS (automatic on Vercel once verified).
+
+## Build
+
+```bash
+npm run build
+```
