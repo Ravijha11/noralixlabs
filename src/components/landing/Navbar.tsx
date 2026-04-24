@@ -20,6 +20,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = React.useState(false);
   const [active, setActive] = React.useState("#home");
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const brandClass = scrolled ? "text-[#0b1a14]" : "text-white";
 
   const scrollProgress = useSpring(scrollY, { stiffness: 120, damping: 30 });
   const [progress, setProgress] = React.useState(0);
@@ -76,7 +77,7 @@ export function Navbar() {
       </div>
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <button type="button" onClick={() => onNavClick("#home")} className="flex items-center gap-2 text-left">
-          <span className="text-sm font-semibold tracking-tight">Noralixlabs</span>
+          <span className={"text-sm font-semibold tracking-tight " + brandClass}>Noralixlabs</span>
         </button>
 
         <nav className="hidden items-center gap-6 text-sm text-white/80 md:flex">
