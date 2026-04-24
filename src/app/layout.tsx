@@ -44,6 +44,9 @@ export const metadata: Metadata = {
       "End-to-end pharmaceutical development — scientifically sound, regulatory compliant, cost-effective.",
     url: "/",
   },
+  verification: {
+    google: "IG7GRqloLvAKTZ8X_rW0q3WXituN6Pv8npVsyhBy6G0",
+  },
 };
 
 export default function RootLayout({
