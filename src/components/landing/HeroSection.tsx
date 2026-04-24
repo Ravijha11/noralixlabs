@@ -292,7 +292,7 @@ export function HeroSection() {
 
       <div className="absolute inset-0 z-10 flex items-center">
         <div className="w-full px-[6%]">
-          <div className="max-w-[55%]">
+          <div className="max-w-full sm:max-w-[85%] lg:max-w-[55%]">
             <h1
               text-split=""
               className="opacity-0 font-[var(--font-serif)] text-white"
