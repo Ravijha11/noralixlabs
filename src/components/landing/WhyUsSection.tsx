@@ -51,7 +51,7 @@ export function WhyUsSection() {
           {items.map(({ num, title, desc, Icon }) => (
             <motion.div
               key={title}
-              className="glass relative overflow-hidden rounded-3xl p-7"
+              className="glass-card relative overflow-hidden p-7"
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

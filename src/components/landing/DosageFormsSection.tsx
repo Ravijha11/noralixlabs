@@ -288,11 +288,13 @@ export function DosageFormsSection() {
             <div className="space-y-4">
               <div className="text-sm font-medium text-black/60">Dosage forms</div>
               <h2 className="text-balance font-[var(--font-serif)] text-4xl tracking-tight">
-                Scroll storytelling for dosage form expertise.
+                Why Choose Noralixlabs as Your Pharmaceutical Development Partner
               </h2>
               <p className="max-w-xl text-black/55">
-                Pinned section with cinematic transitions—designed to feel like{" "}
-                <span className="text-black/70">BiomeSense</span>.
+                Demonstrated expertise across tablets, capsules, injectables,
+                semi-solids, liquid orals, and dry powders — with development
+                decisions aligned to stability, scale-up, and regulatory-ready
+                documentation.
               </p>
 
               <div className="mt-8 flex items-start gap-4">
@@ -330,7 +332,7 @@ export function DosageFormsSection() {
               </div>
             </div>
 
-            <div className="glass relative rounded-3xl p-8">
+            <div className="glass-card relative p-8">
               {items.map((it, i) => {
                 const kind =
                   i === 0

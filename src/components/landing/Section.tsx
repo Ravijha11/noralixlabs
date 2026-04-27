@@ -6,15 +6,21 @@ import { cn } from "@/lib/utils";
 
 export function Section({
   id,
+  ariaLabel,
   className,
   children,
 }: {
   id: string;
+  ariaLabel?: string;
   className?: string;
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className={cn("relative min-h-screen", className)}>
+    <section
+      id={id}
+      aria-label={ariaLabel}
+      className={cn("relative min-h-screen", className)}
+    >
       {children}
     </section>
   );
