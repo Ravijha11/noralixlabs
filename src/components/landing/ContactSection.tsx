@@ -43,6 +43,17 @@ export function ContactSection() {
         return;
       }
 
+      if (typeof window !== "undefined") {
+        const w = window as unknown as {
+          gtag?: (...args: unknown[]) => void;
+        };
+        w.gtag?.("event", "generate_lead", {
+          event_category: "Contact Form",
+          event_label: "Pharmaceutical Development Inquiry",
+          value: 1,
+        });
+      }
+
       setStatus("success");
       form.reset();
     } catch {
@@ -57,7 +68,7 @@ export function ContactSection() {
         <div className="space-y-5">
           <div className="text-sm font-medium text-black/60">Contact</div>
           <h2 className="text-balance font-[var(--font-serif)] text-4xl tracking-tight">
-            Let’s build your next pharmaceutical product.
+            Get a Quote for Pharmaceutical Development Services
           </h2>
           <p className="max-w-xl text-black/55">
             Whether you need support at a specific stage or complete technology
@@ -75,7 +86,7 @@ export function ContactSection() {
           </div>
         </div>
 
-        <div className="glass rounded-3xl p-8">
+        <div className="glass-card p-8">
           {status === "success" ? (
             <div className="grid gap-4">
               <div className="flex items-center gap-3">
@@ -108,42 +119,53 @@ export function ContactSection() {
           ) : (
             <form onSubmit={onSubmit} className="grid gap-4">
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="grid gap-2">
+                <label className="grid gap-2" htmlFor="contact-name">
                   <span className="text-sm font-medium">Name</span>
                   <input
+                    id="contact-name"
                     name="name"
                     required
+                    aria-label="Your full name"
+                    aria-required="true"
                     className="h-11 rounded-2xl border border-black/10 bg-white px-3 text-sm text-[#0b1a14] outline-none placeholder:text-black/40 focus-visible:ring-2 focus-visible:ring-[#00c4b4]/40"
                     placeholder="Your name"
                   />
                 </label>
-                <label className="grid gap-2">
+                <label className="grid gap-2" htmlFor="contact-company">
                   <span className="text-sm font-medium">Company</span>
                   <input
+                    id="contact-company"
                     name="company"
+                    aria-label="Company name"
                     className="h-11 rounded-2xl border border-black/10 bg-white px-3 text-sm text-[#0b1a14] outline-none placeholder:text-black/40 focus-visible:ring-2 focus-visible:ring-[#00c4b4]/40"
                     placeholder="Company"
                   />
                 </label>
               </div>
 
-              <label className="grid gap-2">
+              <label className="grid gap-2" htmlFor="contact-email">
                 <span className="text-sm font-medium">Email</span>
                 <input
+                  id="contact-email"
                   name="email"
                   type="email"
                   required
+                  aria-label="Work email address"
+                  aria-required="true"
                   className="h-11 rounded-2xl border border-black/10 bg-white px-3 text-sm text-[#0b1a14] outline-none placeholder:text-black/40 focus-visible:ring-2 focus-visible:ring-[#00c4b4]/40"
                   placeholder="you@company.com"
                 />
               </label>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="grid gap-2">
+                <label className="grid gap-2" htmlFor="contact-project-stage">
                   <span className="text-sm font-medium">Project Stage</span>
                   <select
+                    id="contact-project-stage"
                     name="projectStage"
                     required
+                    aria-label="Project stage"
+                    aria-required="true"
                     defaultValue=""
                     className="h-11 rounded-2xl border border-black/10 bg-white px-3 text-sm text-[#0b1a14] outline-none focus-visible:ring-2 focus-visible:ring-[#00c4b4]/40"
                   >
@@ -166,10 +188,12 @@ export function ContactSection() {
                   </select>
                 </label>
 
-                <label className="grid gap-2">
+                <label className="grid gap-2" htmlFor="contact-interest">
                   <span className="text-sm font-medium">Service interest</span>
                   <select
+                    id="contact-interest"
                     name="interest"
+                    aria-label="Service interest"
                     className="h-11 rounded-2xl border border-black/10 bg-white px-3 text-sm text-[#0b1a14] outline-none focus-visible:ring-2 focus-visible:ring-[#00c4b4]/40"
                     defaultValue=""
                   >
@@ -193,11 +217,14 @@ export function ContactSection() {
                 </label>
               </div>
 
-              <label className="grid gap-2">
+              <label className="grid gap-2" htmlFor="contact-message">
                 <span className="text-sm font-medium">Message</span>
                 <textarea
+                  id="contact-message"
                   name="message"
                   required
+                  aria-label="Project details message"
+                  aria-required="true"
                   className="min-h-36 rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm text-[#0b1a14] outline-none placeholder:text-black/40 focus-visible:ring-2 focus-visible:ring-[#00c4b4]/40"
                   placeholder="Briefly describe dosage form, stage, and timelines."
                 />
@@ -216,6 +243,7 @@ export function ContactSection() {
               <button
                 type="submit"
                 disabled={status === "submitting"}
+                aria-label="Submit contact form"
                 className="inline-flex h-11 items-center justify-center rounded-full border border-[#00c4b4]/50 bg-[#d9f5ee] px-6 text-sm font-semibold text-[#0b6b60] transition hover:bg-[#c8f0e6] disabled:opacity-60"
               >
                 {status === "submitting" ? (

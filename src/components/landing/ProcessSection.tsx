@@ -74,20 +74,21 @@ export function ProcessSection() {
         <div className="space-y-4">
           <div className="text-sm font-medium text-black/60">Workflow</div>
           <h2 className="text-balance font-[var(--font-serif)] text-4xl tracking-tight">
-            A clear process from brief to commercialization.
+            Our Pharmaceutical Development Process — Product Brief to
+            Commercialization
           </h2>
           <p className="max-w-xl text-black/55">
             We align scope, deliverables, and documentation to match your stage
             and target markets.
           </p>
         </div>
-        <div className="glass rounded-3xl p-6 text-sm text-black/55">
+        <div className="glass-card p-6 text-sm text-black/55">
           Vertical timeline for reliability on mobile, with a scroll-drawn line
           and stage nodes that fill as you progress.
         </div>
       </div>
 
-      <div className="mt-10 glass rounded-3xl p-8">
+      <div className="mt-10 glass-card p-8">
         <div className="relative grid gap-8 lg:grid-cols-[120px_1fr]">
           <div className="relative hidden lg:block">
             <svg className="sticky top-28 h-[520px] w-full" viewBox="0 0 10 520" fill="none">
@@ -115,7 +116,7 @@ export function ProcessSection() {
                   transition={{ duration: 0.7, ease: [0.17, 0.17, 0.43, 1] }}
                   className={"relative grid gap-4 lg:grid-cols-2 " + (alignRight ? "lg:[&>div]:col-start-2" : "")}
                 >
-                  <div className="glass rounded-3xl p-6">
+                  <div className="glass-card p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div className="text-sm font-semibold text-black/70">
                         {String(i + 1).padStart(2, "0")}

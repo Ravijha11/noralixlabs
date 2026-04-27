@@ -3,22 +3,26 @@
 import * as React from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 import { useLenis } from "@/lib/lenis-provider";
 
 const nav = [
-  { href: "#home", label: "Home" },
-  { href: "#services", label: "Services" },
-  { href: "#expertise", label: "Expertise" },
-  { href: "#about", label: "About" },
-  { href: "#contact", label: "Contact" },
+  { href: "/", label: "Home" },
+  { href: "/services", label: "Services" },
+  { href: "/expertise", label: "Expertise" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ] as const;
 
 export function Navbar() {
   const { scrollY } = useScroll();
   const { scrollTo } = useLenis();
+  const pathname = usePathname();
+  const router = useRouter();
   const [scrolled, setScrolled] = React.useState(false);
-  const [active, setActive] = React.useState("#home");
+  const [active, setActive] = React.useState<string>(() => pathname ?? "/");
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const brandClass = scrolled ? "text-[#0b1a14]" : "text-white";
 
@@ -35,27 +39,16 @@ export function Navbar() {
   });
 
   React.useEffect(() => {
-    const sections = nav
-      .map((n) => document.querySelector(n.href))
-      .filter(Boolean) as Element[];
-
-    const obs = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0))[0];
-        if (visible?.target?.id) setActive(`#${visible.target.id}`);
-      },
-      { threshold: [0.25, 0.4, 0.6], rootMargin: "-35% 0px -55% 0px" }
-    );
-
-    sections.forEach((s) => obs.observe(s));
-    return () => obs.disconnect();
-  }, []);
+    setActive(pathname ?? "/");
+  }, [pathname]);
 
   function onNavClick(href: string) {
     setMobileOpen(false);
-    scrollTo(href);
+    if (href.startsWith("#")) {
+      scrollTo(href);
+      return;
+    }
+    router.push(href);
   }
 
   return (
@@ -76,31 +69,32 @@ export function Navbar() {
         <div className="h-full bg-[#00c4b4]" style={{ width: `${progress * 100}%` }} />
       </div>
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <button type="button" onClick={() => onNavClick("#home")} className="flex items-center gap-2 text-left">
+        <Link href="/" className="flex items-center gap-2 text-left" aria-label="Go to Noralixlabs homepage">
           <span className={"text-sm font-semibold tracking-tight " + brandClass}>Noralixlabs</span>
-        </button>
+        </Link>
 
         <nav className="hidden items-center gap-6 text-sm text-white/80 md:flex">
           {nav.map((item) => (
-            <button
+            <Link
               key={item.href}
-              type="button"
-              onClick={() => onNavClick(item.href)}
+              href={item.href}
+              aria-label={`Go to ${item.label} page`}
               className={
                 "transition-colors hover:text-white " +
                 (active === item.href ? "text-[#00c4b4]" : "")
               }
             >
               {item.label}
-            </button>
+            </Link>
           ))}
         </nav>
 
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => onNavClick("#contact")}
+            onClick={() => onNavClick("/contact")}
             className="inline-flex h-10 items-center justify-center rounded-full border border-[#00c4b4]/50 bg-white/0 px-4 text-sm font-medium text-white shadow-[0_0_0_0_rgba(0,196,180,0.0)] transition hover:border-[#00c4b4] hover:shadow-[0_0_32px_rgba(0,196,180,0.25)]"
+            aria-label="Go to Contact page"
           >
             Get in Touch
           </button>
@@ -109,7 +103,7 @@ export function Navbar() {
             type="button"
             onClick={() => setMobileOpen((v) => !v)}
             className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 md:hidden"
-            aria-label="Menu"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
             {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
@@ -128,17 +122,18 @@ export function Navbar() {
             <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6">
               <div className="grid gap-2">
                 {nav.map((item) => (
-                  <button
+                  <Link
                     key={item.href}
-                    type="button"
-                    onClick={() => onNavClick(item.href)}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    aria-label={`Go to ${item.label} page`}
                     className={
                       "rounded-2xl px-3 py-3 text-left text-sm text-white/80 hover:bg-white/5 hover:text-white " +
                       (active === item.href ? "text-[#00c4b4]" : "")
                     }
                   >
                     {item.label}
-                  </button>
+                  </Link>
                 ))}
               </div>
             </div>

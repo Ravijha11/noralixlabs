@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { motion, useInView } from "framer-motion";
+import Image from "next/image";
 import { Reveal } from "@/components/landing/Section";
 
 function useCountUp(target: number, startWhen: boolean) {
@@ -37,7 +38,45 @@ export function AboutSection() {
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <Reveal>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="glass rounded-3xl p-6">
+            <div className="glass-card overflow-hidden sm:col-span-2">
+              <div className="relative aspect-[16/9] w-full">
+                <Image
+                  src="https://www.fernandotazon.com.es/wp-content/uploads/2017/01/image.jpg"
+                  alt="Pharmaceutical laboratory scientist performing analytical testing"
+                  fill
+                  sizes="(min-width: 1024px) 520px, (min-width: 640px) 90vw, 100vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.35),rgba(0,0,0,0.0)_55%)]" />
+              </div>
+            </div>
+            <div className="glass-card overflow-hidden">
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src="https://isspllab.com/wp-content/uploads/2023/05/Physicochemical-Testing-Services-scaled-1.jpg"
+                  alt="Physicochemical testing services laboratory"
+                  fill
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 45vw, 100vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.28),rgba(0,0,0,0.0)_60%)]" />
+              </div>
+            </div>
+
+            <div className="glass-card overflow-hidden">
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src="https://www.pharmsky.com.au/wp-content/uploads/2024/05/ich-stability-img.jpg"
+                  alt="ICH stability study chambers and samples"
+                  fill
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 45vw, 100vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.28),rgba(0,0,0,0.0)_60%)]" />
+              </div>
+            </div>
+
+            <div className="glass-card p-6">
               <div className="text-4xl font-semibold text-[#0b1a14]">
                 {dosage}+
               </div>
@@ -45,11 +84,11 @@ export function AboutSection() {
                 Dosage Form Categories
               </div>
             </div>
-            <div className="glass rounded-3xl p-6">
+            <div className="glass-card p-6">
               <div className="text-4xl font-semibold text-[#0b1a14]">ICH Q1–Q14</div>
               <div className="mt-1 text-sm text-black/55">Guidelines Covered</div>
             </div>
-            <div className="glass rounded-3xl p-6 sm:col-span-2">
+            <div className="glass-card p-6 sm:col-span-2">
               <div className="text-4xl font-semibold text-[#0b1a14]">CTD/eCTD</div>
               <div className="mt-1 text-sm text-black/55">
                 Dossier Format Expertise

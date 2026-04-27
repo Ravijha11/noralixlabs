@@ -3,46 +3,120 @@
 import * as React from "react";
 import gsap from "gsap";
 import { CustomEase, ScrollTrigger } from "gsap/all";
-import SplitType from "split-type";
 
 import { useLenis } from "@/lib/lenis-provider";
 
 export function HeroSection() {
   const sectionRef = React.useRef<HTMLElement | null>(null);
-  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const rafRef = React.useRef<number | null>(null);
   const { lenis } = useLenis();
   const [indicatorOpacity, setIndicatorOpacity] = React.useState(1);
 
   React.useEffect(() => {
+    // #region agent log
+    fetch("http://127.0.0.1:7801/ingest/e84a15bc-cbf7-43cb-9efe-a6699252c008", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "f5b097" },
+      body: JSON.stringify({
+        sessionId: "f5b097",
+        runId: "pre-fix",
+        hypothesisId: "H1",
+        location: "src/components/landing/HeroSection.tsx:HeroEffect:enter",
+        message: "Hero GSAP effect enter",
+        data: {
+          hasSectionRef: Boolean(sectionRef.current),
+          reducedMotion:
+            typeof window !== "undefined" &&
+            window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+
     gsap.registerPlugin(CustomEase, ScrollTrigger);
     CustomEase.create("customEase", "M0,0 C0.17,0.17 0.43,1 1,1");
 
     const ctx = gsap.context(() => {
-      const split = new SplitType("[text-split]", {
-        types: "words,chars,lines",
-        tagName: "span",
-      });
-
-      gsap.set("[text-split]", { opacity: 1 });
+      const h1 = sectionRef.current?.querySelector("h1");
+      // #region agent log
+      fetch("http://127.0.0.1:7801/ingest/e84a15bc-cbf7-43cb-9efe-a6699252c008", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "f5b097" },
+        body: JSON.stringify({
+          sessionId: "f5b097",
+          runId: "pre-fix",
+          hypothesisId: "H2",
+          location: "src/components/landing/HeroSection.tsx:HeroEffect:ctx",
+          message: "Hero ctx created; initial h1 styles",
+          data: h1
+            ? {
+                text: (h1.textContent ?? "").trim().slice(0, 80),
+                inlineOpacity: (h1 as HTMLElement).style.opacity || null,
+                computedOpacity: window.getComputedStyle(h1).opacity,
+                computedVisibility: window.getComputedStyle(h1).visibility,
+                computedDisplay: window.getComputedStyle(h1).display,
+              }
+            : { h1Found: false },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
 
       const tl = gsap.timeline();
+      tl.eventCallback("onStart", () => {
+        const el = sectionRef.current?.querySelector("h1");
+        // #region agent log
+        fetch("http://127.0.0.1:7801/ingest/e84a15bc-cbf7-43cb-9efe-a6699252c008", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "f5b097" },
+          body: JSON.stringify({
+            sessionId: "f5b097",
+            runId: "pre-fix",
+            hypothesisId: "H3",
+            location: "src/components/landing/HeroSection.tsx:HeroEffect:tl:onStart",
+            message: "Hero GSAP timeline started",
+            data: el
+              ? {
+                  progress: tl.progress(),
+                  computedOpacity: window.getComputedStyle(el).opacity,
+                  inlineOpacity: (el as HTMLElement).style.opacity || null,
+                }
+              : { progress: tl.progress(), h1Found: false },
+            timestamp: Date.now(),
+          }),
+        }).catch(() => {});
+        // #endregion
+      });
+      tl.eventCallback("onComplete", () => {
+        const el = sectionRef.current?.querySelector("h1");
+        // #region agent log
+        fetch("http://127.0.0.1:7801/ingest/e84a15bc-cbf7-43cb-9efe-a6699252c008", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "f5b097" },
+          body: JSON.stringify({
+            sessionId: "f5b097",
+            runId: "pre-fix",
+            hypothesisId: "H4",
+            location: "src/components/landing/HeroSection.tsx:HeroEffect:tl:onComplete",
+            message: "Hero GSAP timeline complete",
+            data: el
+              ? {
+                  progress: tl.progress(),
+                  computedOpacity: window.getComputedStyle(el).opacity,
+                  inlineOpacity: (el as HTMLElement).style.opacity || null,
+                }
+              : { progress: tl.progress(), h1Found: false },
+            timestamp: Date.now(),
+          }),
+        }).catch(() => {});
+        // #endregion
+      });
+
       tl.to(".hero .hero-bg", {
         scale: 1,
         ease: "customEase",
         duration: 1,
       })
-        .from(
-          ".hero h1 .line",
-          {
-            opacity: 0,
-            y: "1rem",
-            ease: "customEase",
-            duration: 1,
-            stagger: { amount: 0.1 },
-          },
-          "<0.2"
-        )
         .from(
           ".hero .button",
           {
@@ -54,195 +128,46 @@ export function HeroSection() {
           "<0.4"
         );
 
-      return () => {
-        split.revert();
+      // after a couple frames, re-check h1 visibility (captures "flash then hide" behavior)
+      let frames = 0;
+      const raf = () => {
+        frames += 1;
+        if (frames === 2 || frames === 30) {
+          const el = sectionRef.current?.querySelector("h1");
+          // #region agent log
+          fetch("http://127.0.0.1:7801/ingest/e84a15bc-cbf7-43cb-9efe-a6699252c008", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "f5b097" },
+            body: JSON.stringify({
+              sessionId: "f5b097",
+              runId: "pre-fix",
+              hypothesisId: "H5",
+              location: "src/components/landing/HeroSection.tsx:HeroEffect:rafCheck",
+              message: "Hero h1 style check after frames",
+              data: el
+                ? {
+                    frames,
+                    tlProgress: tl.progress(),
+                    computedOpacity: window.getComputedStyle(el).opacity,
+                    computedVisibility: window.getComputedStyle(el).visibility,
+                    computedDisplay: window.getComputedStyle(el).display,
+                    inlineOpacity: (el as HTMLElement).style.opacity || null,
+                    inlineTransform: (el as HTMLElement).style.transform || null,
+                  }
+                : { frames, tlProgress: tl.progress(), h1Found: false },
+              timestamp: Date.now(),
+            }),
+          }).catch(() => {});
+          // #endregion
+        }
+        if (frames < 30) requestAnimationFrame(raf);
       };
+      requestAnimationFrame(raf);
+
+      return;
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
-
-  React.useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const context = ctx;
-
-    type Bubble = {
-      x: number;
-      y: number;
-      r: number;
-      dx: number;
-      dy: number;
-      alpha: number;
-      layer: 1 | 2 | 3;
-    };
-
-    let w = 0;
-    let h = 0;
-    let dpr = 1;
-    let layer1: Bubble[] = [];
-    let layer2: Bubble[] = [];
-    let layer3: Bubble[] = [];
-
-    function rand(min: number, max: number) {
-      return Math.random() * (max - min) + min;
-    }
-
-    function drawBackground(c: CanvasRenderingContext2D) {
-      const g = c.createLinearGradient(0, 0, w, h);
-      g.addColorStop(0, "#020f0e");
-      g.addColorStop(1, "#041a18");
-      c.fillStyle = g;
-      c.fillRect(0, 0, w, h);
-    }
-
-    function drawBubble(
-      c: CanvasRenderingContext2D,
-      x: number,
-      y: number,
-      r: number,
-      alpha: number
-    ) {
-      const bodyGrad = c.createRadialGradient(
-        x - r * 0.3,
-        y - r * 0.35,
-        r * 0.05,
-        x,
-        y,
-        r
-      );
-      bodyGrad.addColorStop(0, `rgba(160, 255, 245, ${alpha * 0.95})`);
-      bodyGrad.addColorStop(0.25, `rgba(0, 210, 195, ${alpha * 0.7})`);
-      bodyGrad.addColorStop(0.6, `rgba(0, 150, 140, ${alpha * 0.4})`);
-      bodyGrad.addColorStop(1, `rgba(0, 60, 55, ${alpha * 0.05})`);
-
-      c.beginPath();
-      c.arc(x, y, r, 0, Math.PI * 2);
-      c.fillStyle = bodyGrad;
-      c.fill();
-
-      c.strokeStyle = `rgba(100, 255, 235, ${alpha * 0.25})`;
-      c.lineWidth = Math.max(0.3, r * 0.04);
-      c.stroke();
-
-      const specGrad = c.createRadialGradient(
-        x - r * 0.35,
-        y - r * 0.38,
-        0,
-        x - r * 0.35,
-        y - r * 0.38,
-        r * 0.25
-      );
-      specGrad.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.7})`);
-      specGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
-
-      c.beginPath();
-      c.arc(x - r * 0.35, y - r * 0.38, r * 0.25, 0, Math.PI * 2);
-      c.fillStyle = specGrad;
-      c.fill();
-    }
-
-    function init() {
-      const c = canvasRef.current;
-      if (!c) return;
-      const parent = c.parentElement;
-      if (!parent) return;
-
-      const rect = parent.getBoundingClientRect();
-      w = Math.max(1, Math.floor(rect.width));
-      h = Math.max(1, Math.floor(rect.height));
-      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-
-      c.width = Math.floor(w * dpr);
-      c.height = Math.floor(h * dpr);
-      c.style.width = `${w}px`;
-      c.style.height = `${h}px`;
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      layer1 = Array.from({ length: 6 }, () => ({
-        layer: 1 as const,
-        r: rand(80, 180),
-        x: rand(0, w * 0.3),
-        y: rand(0, h),
-        alpha: rand(0.08, 0.15),
-        dx: rand(0.1, 0.3),
-        dy: rand(-0.05, 0.1),
-      }));
-
-      layer2 = Array.from({ length: 18 }, () => ({
-        layer: 2 as const,
-        r: rand(15, 55),
-        x: rand(0, w),
-        y: rand(0, h),
-        alpha: rand(0.35, 0.7),
-        dx: rand(-0.4, 0.4),
-        dy: rand(-0.3, 0.3),
-      }));
-
-      layer3 = Array.from({ length: 120 }, () => ({
-        layer: 3 as const,
-        r: rand(3, 18),
-        x: rand(w * 0.75, w),
-        y: rand(0, h),
-        alpha: rand(0.25, 0.7),
-        dx: rand(-0.05, 0.05),
-        dy: rand(-0.1, 0.1),
-      }));
-    }
-
-    function step() {
-      context.clearRect(0, 0, w, h);
-      drawBackground(context);
-
-      context.filter = "blur(12px)";
-      for (const b of layer1) {
-        drawBubble(context, b.x, b.y, b.r, b.alpha);
-        b.x += b.dx;
-        b.y += b.dy;
-        if (b.x > w + b.r) b.x = -b.r;
-        if (b.x < -b.r) b.x = w + b.r;
-        if (b.y > h + b.r) b.y = -b.r;
-        if (b.y < -b.r) b.y = h + b.r;
-      }
-
-      context.filter = "none";
-      for (const b of layer2) {
-        drawBubble(context, b.x, b.y, b.r, b.alpha);
-        b.x += b.dx;
-        b.y += b.dy;
-        if (b.x + b.r > w || b.x - b.r < 0) b.dx *= -1;
-        if (b.y + b.r > h || b.y - b.r < 0) b.dy *= -1;
-      }
-
-      for (const b of layer3) {
-        drawBubble(context, b.x, b.y, b.r, b.alpha);
-        b.x += b.dx;
-        b.y += b.dy;
-        if (b.x < w * 0.65) b.dx += 0.01;
-        if (b.x > w + b.r) b.x = w * 0.75;
-        if (b.y + b.r > h || b.y - b.r < 0) b.dy *= -1;
-      }
-
-      rafRef.current = requestAnimationFrame(step);
-    }
-
-    init();
-    rafRef.current = requestAnimationFrame(step);
-
-    let t: number | null = null;
-    function onResize() {
-      if (t) window.clearTimeout(t);
-      t = window.setTimeout(() => init(), 200);
-    }
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      context.filter = "none";
-    };
   }, []);
 
   React.useEffect(() => {
@@ -274,37 +199,40 @@ export function HeroSection() {
     <section ref={sectionRef} className="hero relative h-[100vh] overflow-hidden">
       <div className="hero-bg absolute inset-0 will-change-transform" style={{ transform: "scale(1.4)" }}>
         <video
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover object-center"
           autoPlay
           muted
           loop
           playsInline
-        />
-        <div className="hero-bg-gradient absolute inset-0" />
+          preload="metadata"
+          aria-hidden="true"
+        >
+          <source src="/8485632-hd_1920_1080_25fps.mp4" type="video/mp4" />
+        </video>
+        <div className="hero-bg-gradient absolute inset-0 opacity-15 mix-blend-multiply" />
       </div>
 
-      <div className="hero-bg_overlay absolute inset-0" />
-
-      <div className="absolute inset-0">
-        <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" aria-hidden="true" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(2,15,14,0.75)_0%,rgba(2,15,14,0.3)_50%,rgba(2,15,14,0.05)_100%)]" />
-      </div>
+      {/* keep video clear; rely on text shadow for readability */}
 
       <div className="absolute inset-0 z-10 flex items-center">
         <div className="w-full px-[6%]">
-          <div className="max-w-full sm:max-w-[85%] lg:max-w-[55%]">
+          <div className="max-w-full sm:max-w-[85%] lg:max-w-[55%] drop-shadow-[0_10px_30px_rgba(0,0,0,0.55)]">
             <h1
               text-split=""
-              className="opacity-0 font-[var(--font-serif)] text-white"
+              className="font-[var(--font-serif)] text-white"
               style={{
                 fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
                 lineHeight: 1.05,
               }}
             >
-              Pharmaceutical Product
+              One CRO Partner
               <br />
-              Development. <span className="text-[#00c4b4]">Redefined.</span>
+              for Your <span className="text-[#00c4b4]">Drug Program</span>
             </h1>
+
+            <h2 className="hero-subtitle hero-description mt-5 max-w-2xl text-pretty text-base font-medium text-white/75 sm:text-lg">
+              Formulation • Testing • Stability • Regulatory
+            </h2>
 
             <a href="#contact" className="button is-primary mt-7 inline-flex">
               <div>Partner with Us</div>

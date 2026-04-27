@@ -106,14 +106,28 @@
     @apply border border-black/5 bg-[#eef7f4];
   }
 
+  .glass-card {
+    @apply border border-black/10 bg-white/70 shadow-sm ring-1 ring-black/[0.03];
+  }
+
+  .hero-canvas,
+  .animated-section {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
   .marquee {
     mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
   }
   .marquee__inner {
     display: inline-block;
     padding-right: 2rem;
-    animation: marquee 22s linear infinite;
+    animation: marquee 44s linear infinite;
     will-change: transform;
+  }
+  .marquee:hover .marquee__inner {
+    animation-play-state: paused;
   }
 
   .hero-bg-gradient {
@@ -162,6 +176,14 @@
 
   .hero-scroll-indicator {
     animation: heroBounce 1.5s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
