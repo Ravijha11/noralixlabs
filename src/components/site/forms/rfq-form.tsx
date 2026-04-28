@@ -3,7 +3,6 @@
 import * as React from "react";
 
 import { FormStatus } from "@/components/site/form-status";
-import { getFormEndpoint } from "@/lib/forms";
 
 function Input({
   label,
@@ -70,23 +69,11 @@ function Select({
 }
 
 export function RfqForm() {
-  const endpoint = getFormEndpoint("rfq");
+  const endpoint = "/api/rfq";
   const { state, error, onSubmit, successMessage } = FormStatus({
     successMessage:
       "Thanks—your RFQ has been submitted. We’ll respond with a scope and next steps.",
   });
-
-  if (!endpoint) {
-    return (
-      <div className="text-sm text-muted-foreground">
-        RFQ form is not configured yet. Set{" "}
-        <code className="rounded bg-muted px-1 py-0.5">
-          NEXT_PUBLIC_RFQ_FORM_URL
-        </code>{" "}
-        to your form provider endpoint.
-      </div>
-    );
-  }
 
   return (
     <form

@@ -109,9 +109,13 @@ export function ContactSection() {
                 Or reach us directly:{" "}
                 <a
                   className="text-[#00c4b4] hover:underline"
-                  href="mailto:contact@noralixlabs.com"
+                  href="mailto:ojha.pharma@yahoo.com"
                 >
-                  contact@noralixlabs.com
+                  ojha.pharma@yahoo.com
+                </a>{" "}
+                <span className="text-black/25">·</span>{" "}
+                <a className="text-[#00c4b4] hover:underline" href="tel:+919630693905">
+                  +91 96306 93905
                 </a>{" "}
                 <span className="text-black/25">·</span> <span>India</span>
               </div>

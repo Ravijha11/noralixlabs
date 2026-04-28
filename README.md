@@ -20,20 +20,17 @@ Create a `.env.local` file in the project root:
 # Public base URL (used for metadata, sitemap, robots)
 NEXT_PUBLIC_SITE_URL=https://noralixlabs.com
 
-# Form provider endpoints (email-forwarding service)
-# Example: Formspree endpoint URL for each form
-NEXT_PUBLIC_CONTACT_FORM_URL=
-NEXT_PUBLIC_RFQ_FORM_URL=
+# Resend (transactional email for form submissions)
+RESEND_API_KEY=
+RESEND_FROM_EMAIL=noreply@noralixlabs.com
+RESEND_TO_EMAIL=ojha.pharma@yahoo.com
 ```
 
 ## Lead capture (email forwarding)
 
-- **Contact** page posts to `NEXT_PUBLIC_CONTACT_FORM_URL`
-- **RFQ** page posts to `NEXT_PUBLIC_RFQ_FORM_URL`
-- Both forms include a simple **honeypot** field (`_gotcha`) to reduce spam.
-
-Recommended providers:
-- **Formspree** or **Basin** (easy setup + deliverability + dashboard)
+- **Contact** submissions are sent via `[src/app/api/contact/route.ts](src/app/api/contact/route.ts)` using Resend
+- **RFQ** submissions are sent via `[src/app/api/rfq/route.ts](src/app/api/rfq/route.ts)` using Resend
+- Both forms include a simple **honeypot** field (`_gotcha` / `gotcha`) to reduce spam.
 
 ## Deployment (Vercel)
 
@@ -41,8 +38,9 @@ Recommended providers:
 - Create a new project on Vercel and import the repo.
 - Set environment variables in Vercel Project Settings:
   - `NEXT_PUBLIC_SITE_URL`
-  - `NEXT_PUBLIC_CONTACT_FORM_URL`
-  - `NEXT_PUBLIC_RFQ_FORM_URL`
+  - `RESEND_API_KEY`
+  - `RESEND_FROM_EMAIL`
+  - `RESEND_TO_EMAIL`
 - Deploy.
 
 ## Connect `noralixlabs.com` domain
