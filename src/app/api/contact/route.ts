@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { getResendClient, getResendDefaults } from "@/lib/resend";
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => null);
@@ -12,16 +14,37 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // For now: log and return success.
-    // You can later replace this with nodemailer (SMTP) or an email API.
-    console.log("CONTACT_SUBMISSION", {
-      name: body.name,
-      company: body.company,
-      email: body.email,
-      interest: body.interest,
-      projectStage: body.projectStage,
-      message: body.message,
-      createdAt: new Date().toISOString(),
+    const createdAt = new Date().toISOString();
+
+    const email = String(body.email ?? "").trim();
+    const name = String(body.name ?? "").trim();
+    const company = String(body.company ?? "").trim();
+    const interest = String(body.interest ?? "").trim();
+    const projectStage = String(body.projectStage ?? "").trim();
+    const message = String(body.message ?? "").trim();
+
+    const resend = getResendClient();
+    const { from, to } = getResendDefaults();
+
+    await resend.emails.send({
+      from,
+      to,
+      subject: "Noralix Labs — Contact form",
+      replyTo: email ? [email] : undefined,
+      text: [
+        "New contact form submission",
+        "",
+        `Name: ${name || "-"}`,
+        `Company: ${company || "-"}`,
+        `Email: ${email || "-"}`,
+        `Service interest: ${interest || "-"}`,
+        `Project stage: ${projectStage || "-"}`,
+        "",
+        "Message:",
+        message || "-",
+        "",
+        `Created at: ${createdAt}`,
+      ].join("\n"),
     });
 
     return NextResponse.json({ ok: true });

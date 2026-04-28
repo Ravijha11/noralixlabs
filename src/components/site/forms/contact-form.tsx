@@ -3,7 +3,6 @@
 import * as React from "react";
 
 import { FormStatus } from "@/components/site/form-status";
-import { getFormEndpoint } from "@/lib/forms";
 
 function Field({
   label,
@@ -35,23 +34,11 @@ function Field({
 }
 
 export function ContactForm() {
-  const endpoint = getFormEndpoint("contact");
+  const endpoint = "/api/contact";
   const { state, error, onSubmit, successMessage } = FormStatus({
     successMessage:
       "Thanks—your message has been sent. We’ll get back with next steps.",
   });
-
-  if (!endpoint) {
-    return (
-      <div className="text-sm text-muted-foreground">
-        Contact form is not configured yet. Set{" "}
-        <code className="rounded bg-muted px-1 py-0.5">
-          NEXT_PUBLIC_CONTACT_FORM_URL
-        </code>{" "}
-        to your form provider endpoint.
-      </div>
-    );
-  }
 
   return (
     <form

@@ -48,13 +48,15 @@ export function StructuredData({
       {
         "@type": "ContactPoint",
         contactType: "customer service",
-        email: "contact@noralixlabs.com",
+        email: "ojha.pharma@yahoo.com",
+        telephone: "+919630693905",
         availableLanguage: ["English", "Hindi"],
       },
       {
         "@type": "ContactPoint",
         contactType: "sales",
-        email: "contact@noralixlabs.com",
+        email: "ojha.pharma@yahoo.com",
+        telephone: "+919630693905",
       },
     ],
     sameAs: [
