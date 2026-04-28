@@ -1,10 +1,18 @@
+import Image from "next/image";
+
 export function Footer() {
   return (
     <footer className="border-t border-white/10 bg-[#070a14]">
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-8 md:grid-cols-3 md:items-start">
           <div className="space-y-2">
-            <div className="text-sm font-semibold">Noralixlabs</div>
+            <Image
+              src="/logo.png"
+              alt="Noralix Labs"
+              width={220}
+              height={54}
+              className="h-10 w-auto"
+            />
             <p className="text-sm text-white/60">
               Scientifically sound. Regulatory compliant. Cost-effective.
             </p>

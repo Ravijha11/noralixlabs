@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { motion, useInView } from "framer-motion";
-import Image from "next/image";
 import { Reveal } from "@/components/landing/Section";
+import { SlicedRevealImage } from "@/components/landing/SlicedRevealImage";
 
 function useCountUp(target: number, startWhen: boolean) {
   const [value, setValue] = React.useState(0);
@@ -40,24 +40,22 @@ export function AboutSection() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="glass-card overflow-hidden sm:col-span-2">
               <div className="relative aspect-[16/9] w-full">
-                <Image
+                <SlicedRevealImage
                   src="https://www.fernandotazon.com.es/wp-content/uploads/2017/01/image.jpg"
                   alt="Pharmaceutical laboratory scientist performing analytical testing"
-                  fill
-                  sizes="(min-width: 1024px) 520px, (min-width: 640px) 90vw, 100vw"
-                  className="object-cover"
+                  trigger={inView}
+                  className="absolute inset-0"
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.35),rgba(0,0,0,0.0)_55%)]" />
               </div>
             </div>
             <div className="glass-card overflow-hidden">
               <div className="relative aspect-[4/3] w-full">
-                <Image
+                <SlicedRevealImage
                   src="https://isspllab.com/wp-content/uploads/2023/05/Physicochemical-Testing-Services-scaled-1.jpg"
                   alt="Physicochemical testing services laboratory"
-                  fill
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 45vw, 100vw"
-                  className="object-cover"
+                  trigger={inView}
+                  className="absolute inset-0"
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.28),rgba(0,0,0,0.0)_60%)]" />
               </div>
@@ -65,12 +63,11 @@ export function AboutSection() {
 
             <div className="glass-card overflow-hidden">
               <div className="relative aspect-[4/3] w-full">
-                <Image
+                <SlicedRevealImage
                   src="https://www.pharmsky.com.au/wp-content/uploads/2024/05/ich-stability-img.jpg"
                   alt="ICH stability study chambers and samples"
-                  fill
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 45vw, 100vw"
-                  className="object-cover"
+                  trigger={inView}
+                  className="absolute inset-0"
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.28),rgba(0,0,0,0.0)_60%)]" />
               </div>
@@ -133,15 +130,21 @@ export function AboutSection() {
       </div>
 
       <div className="mt-10 overflow-hidden border-y border-black/10 bg-black/[0.02] py-4">
-        <div className="marquee whitespace-nowrap text-sm text-[#00a89a]/80">
-          <span className="marquee__inner">
-            Formulation Development · Analytical Validation · Stability Studies ·
-            Regulatory Filing · Technology Transfer · Vendor Qualification ·
-          </span>
-          <span className="marquee__inner" aria-hidden="true">
-            Formulation Development · Analytical Validation · Stability Studies ·
-            Regulatory Filing · Technology Transfer · Vendor Qualification ·
-          </span>
+        <div
+          className="marquee whitespace-nowrap text-sm text-[#00a89a]/80"
+          tabIndex={0}
+          aria-label="Services ticker (focus or hover to pause)"
+        >
+          <div className="marquee__track" aria-hidden="true">
+            <span className="marquee__inner">
+              Formulation Development · Analytical Validation · Stability Studies ·
+              Regulatory Filing · Technology Transfer · Vendor Qualification ·
+            </span>
+            <span className="marquee__inner">
+              Formulation Development · Analytical Validation · Stability Studies ·
+              Regulatory Filing · Technology Transfer · Vendor Qualification ·
+            </span>
+          </div>
         </div>
       </div>
     </div>
