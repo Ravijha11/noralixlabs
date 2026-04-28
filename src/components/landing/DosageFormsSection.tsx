@@ -200,6 +200,7 @@ function Icon({
 export function DosageFormsSection() {
   const wrapperRef = React.useRef<HTMLDivElement | null>(null);
   const [activeIndex, setActiveIndex] = React.useState(0);
+  const activeIndexRef = React.useRef(0);
 
   React.useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -220,7 +221,6 @@ export function DosageFormsSection() {
       ctx = gsap.context(() => {
         const panel = wrapper.querySelector<HTMLElement>("[data-panel]");
         const slides = gsap.utils.toArray<HTMLElement>("[data-slide]");
-        const dots = gsap.utils.toArray<HTMLElement>("[data-dot]");
 
         if (!panel || !slides.length) return;
 
@@ -240,17 +240,18 @@ export function DosageFormsSection() {
           trigger: wrapper,
           start: "top top",
           end: "bottom bottom",
-          scrub: 1.5,
+          scrub: 1,
           animation: tl,
+          invalidateOnRefresh: true,
           onUpdate(self) {
             const idx = Math.min(
               slides.length - 1,
               Math.floor(self.progress * slides.length)
             );
-            setActiveIndex(idx);
-            dots.forEach((d, i) => {
-              d.dataset.active = i === idx ? "true" : "false";
-            });
+            if (idx !== activeIndexRef.current) {
+              activeIndexRef.current = idx;
+              setActiveIndex(idx);
+            }
           },
         });
       }, wrapper);

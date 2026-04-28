@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import { Container } from "@/components/site/container";
 
@@ -8,7 +9,13 @@ export function SiteFooter() {
       <Container className="py-10">
         <div className="grid gap-8 md:grid-cols-3">
           <div className="space-y-2">
-            <div className="font-semibold">Noralix Labs</div>
+            <Image
+              src="/logo.png"
+              alt="Noralix Labs"
+              width={220}
+              height={54}
+              className="h-10 w-auto"
+            />
             <p className="text-sm text-muted-foreground">
               Comprehensive and flexible support from product development to
               commercialization.

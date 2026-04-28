@@ -34,6 +34,11 @@ export const metadata: Metadata = {
   description:
     "Noralixlabs is a pharmaceutical product development CRO offering formulation development, analytical method validation, ICH stability studies, CTD/eCTD dossier preparation, and technology transfer. Scientifically sound, regulatory compliant, cost-effective.",
 
+  icons: {
+    icon: [{ url: "/icon.png" }],
+    apple: [{ url: "/apple-icon.png" }],
+  },
+
   keywords: [
     "pharmaceutical product development",
     "pharmaceutical CRO India",
