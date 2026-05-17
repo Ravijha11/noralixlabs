@@ -1,7 +1,7 @@
 import { Section } from "@/components/landing/Section";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { AboutSection } from "@/components/landing/AboutSection";
-import { DosageFormsSection } from "@/components/landing/DosageFormsSection";
+import { ExpertiseHomeSection } from "@/components/expertise/ExpertisePageContent";
 import { ServicesSection } from "@/components/landing/ServicesSection";
 import { WhyUsSection } from "@/components/landing/WhyUsSection";
 import { ProcessSection } from "@/components/landing/ProcessSection";
@@ -19,13 +19,13 @@ export default function Home() {
       <Section id="about" ariaLabel="About Noralixlabs">
         <AboutSection />
       </Section>
-      <Section
+      <section
         id="expertise"
-        ariaLabel="Pharmaceutical development expertise"
-        className="border-t border-black/10"
+        aria-label="Pharmaceutical development expertise"
+        className="scroll-mt-16 border-t border-black/10"
       >
-        <DosageFormsSection />
-      </Section>
+        <ExpertiseHomeSection />
+      </section>
       <Section
         id="services"
         ariaLabel="Pharmaceutical development services"
@@ -46,7 +46,7 @@ export default function Home() {
       <Section
         id="contact"
         ariaLabel="Contact Noralixlabs"
-        className="border-t border-black/10"
+        className="border-t border-black/10 !min-h-0 overflow-hidden p-0"
       >
         <ContactSection />
       </Section>

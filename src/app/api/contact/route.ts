@@ -1,51 +1,67 @@
 import { NextResponse } from "next/server";
 
-import { getResendClient, getResendDefaults } from "@/lib/resend";
+import {
+  getResendClient,
+  getResendDefaults,
+  runAfterResponse,
+  sendContactNotification,
+  type ContactNotificationPayload,
+} from "@/lib/resend";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateContactBody(body: Record<string, unknown>): {
+  ok: true;
+  payload: ContactNotificationPayload;
+} | { ok: false; error: string } {
+  const name = String(body.name ?? "").trim();
+  const email = String(body.email ?? "").trim();
+  const projectStage = String(body.projectStage ?? "").trim();
+  const message = String(body.message ?? "").trim();
+
+  if (!name) return { ok: false, error: "Name is required." };
+  if (!email || !EMAIL_RE.test(email)) {
+    return { ok: false, error: "A valid email is required." };
+  }
+  if (!projectStage) return { ok: false, error: "Project stage is required." };
+  if (!message) return { ok: false, error: "Message is required." };
+
+  return {
+    ok: true,
+    payload: {
+      name,
+      email,
+      projectStage,
+      message,
+      company: String(body.company ?? "").trim(),
+      interest: String(body.interest ?? "").trim(),
+    },
+  };
+}
 
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => null);
-    if (!body) {
+    if (!body || typeof body !== "object") {
       return NextResponse.json({ ok: false, error: "Invalid JSON." }, { status: 400 });
     }
 
-    // honeypot
     if (body.gotcha) {
       return NextResponse.json({ ok: true });
     }
 
-    const createdAt = new Date().toISOString();
+    const validated = validateContactBody(body as Record<string, unknown>);
+    if (!validated.ok) {
+      return NextResponse.json(
+        { ok: false, error: validated.error },
+        { status: 400 }
+      );
+    }
 
-    const email = String(body.email ?? "").trim();
-    const name = String(body.name ?? "").trim();
-    const company = String(body.company ?? "").trim();
-    const interest = String(body.interest ?? "").trim();
-    const projectStage = String(body.projectStage ?? "").trim();
-    const message = String(body.message ?? "").trim();
+    getResendClient();
+    getResendDefaults();
 
-    const resend = getResendClient();
-    const { from, to } = getResendDefaults();
-
-    await resend.emails.send({
-      from,
-      to,
-      subject: "Noralix Labs — Contact form",
-      replyTo: email ? [email] : undefined,
-      text: [
-        "New contact form submission",
-        "",
-        `Name: ${name || "-"}`,
-        `Company: ${company || "-"}`,
-        `Email: ${email || "-"}`,
-        `Service interest: ${interest || "-"}`,
-        `Project stage: ${projectStage || "-"}`,
-        "",
-        "Message:",
-        message || "-",
-        "",
-        `Created at: ${createdAt}`,
-      ].join("\n"),
-    });
+    await runAfterResponse(sendContactNotification(validated.payload));
 
     return NextResponse.json({ ok: true });
   } catch {
@@ -55,4 +71,3 @@ export async function POST(req: Request) {
     );
   }
 }
-
