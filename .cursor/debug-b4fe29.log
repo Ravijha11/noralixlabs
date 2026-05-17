@@ -1,0 +1,16 @@
+{"sessionId":"b4fe29","location":"contact/route.ts:beforeRunAfter","message":"validated, starting runAfterResponse","data":{"msSinceStart":1,"vercel":false},"timestamp":1778920976440,"hypothesisId":"D"}
+{"sessionId":"b4fe29","location":"resend.ts:branch","message":"void branch (non-blocking local)","data":{"vercel":false},"timestamp":1778920976442,"hypothesisId":"A","runId":"post-fix"}
+{"sessionId":"b4fe29","location":"contact/route.ts:response","message":"returning ok response","data":{"totalMs":5,"vercel":false},"timestamp":1778920976444,"hypothesisId":"A"}
+{"sessionId":"b4fe29","location":"resend.ts:emailDone","message":"email send completed","data":{"ms":985,"vercel":false},"timestamp":1778920977427,"hypothesisId":"B"}
+{"sessionId":"b4fe29","location":"ContactSection.tsx:submitStart","message":"client fetch starting","data":{"timeoutMs":30000},"timestamp":1778921026521,"hypothesisId":"E"}
+{"sessionId":"b4fe29","location":"ContactSection.tsx:submitSuccess","message":"client fetch ok","data":{"ms":42,"status":200},"timestamp":1778921026563,"hypothesisId":"A"}
+{"sessionId":"b4fe29","location":"contact/route.ts:beforeRunAfter","message":"validated, starting runAfterResponse","data":{"msSinceStart":1,"vercel":false},"timestamp":1778921026549,"hypothesisId":"D"}
+{"sessionId":"b4fe29","location":"resend.ts:branch","message":"void branch (non-blocking local)","data":{"vercel":false},"timestamp":1778921026552,"hypothesisId":"A","runId":"post-fix"}
+{"sessionId":"b4fe29","location":"contact/route.ts:response","message":"returning ok response","data":{"totalMs":10,"vercel":false},"timestamp":1778921026558,"hypothesisId":"A"}
+{"sessionId":"b4fe29","location":"resend.ts:emailDone","message":"email send completed","data":{"ms":1637,"vercel":false},"timestamp":1778921028189,"hypothesisId":"B"}
+{"sessionId":"b4fe29","location":"ContactSection.tsx:submitStart","message":"client fetch starting","data":{"timeoutMs":30000},"timestamp":1779030602483,"hypothesisId":"E"}
+{"sessionId":"b4fe29","location":"ContactSection.tsx:submitSuccess","message":"client fetch ok","data":{"ms":7030,"status":200},"timestamp":1779030609513,"hypothesisId":"A"}
+{"sessionId":"b4fe29","location":"contact/route.ts:beforeRunAfter","message":"validated, starting runAfterResponse","data":{"msSinceStart":3,"vercel":false},"timestamp":1779030609489,"hypothesisId":"D"}
+{"sessionId":"b4fe29","location":"resend.ts:branch","message":"void branch (non-blocking local)","data":{"vercel":false},"timestamp":1779030609501,"hypothesisId":"A","runId":"post-fix"}
+{"sessionId":"b4fe29","location":"contact/route.ts:response","message":"returning ok response","data":{"totalMs":20,"vercel":false},"timestamp":1779030609506,"hypothesisId":"A"}
+{"sessionId":"b4fe29","location":"resend.ts:emailDone","message":"email send completed","data":{"ms":1814,"vercel":false},"timestamp":1779030611315,"hypothesisId":"B"}
