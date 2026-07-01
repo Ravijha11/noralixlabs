@@ -23,7 +23,7 @@ NEXT_PUBLIC_SITE_URL=https://noralixlabs.com
 # Resend (transactional email for form submissions)
 RESEND_API_KEY=
 RESEND_FROM_EMAIL=noreply@noralixlabs.com
-RESEND_TO_EMAIL=ojha.pharma@yahoo.com
+RESEND_TO_EMAIL=your-inbox@example.com
 ```
 
 ## Lead capture (email forwarding)
