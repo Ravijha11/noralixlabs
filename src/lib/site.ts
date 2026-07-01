@@ -1,9 +1,3 @@
-export const SITE_CONTACT = {
-  phone: "+91 96306 93905",
-  phoneTel: "+919630693905",
-  email: "ojha.pharma@yahoo.com",
-} as const;
-
 const inquiryBySlug: Record<string, string> = {
   tablets: "Inquiry regarding tablet formulation development.",
   capsules: "Inquiry regarding capsule formulation development.",

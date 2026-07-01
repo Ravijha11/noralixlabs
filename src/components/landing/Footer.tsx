@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Mail, Phone } from "lucide-react";
-
-import { SITE_CONTACT } from "@/lib/site";
+import { ArrowRight } from "lucide-react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -82,30 +80,9 @@ export function Footer() {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
               Contact
             </p>
-            <ul className="mt-4 space-y-3">
-              <li>
-                <a
-                  href={`tel:${SITE_CONTACT.phoneTel}`}
-                  className="group inline-flex items-center gap-3 text-sm text-slate-700 transition-colors duration-200 hover:text-blue-700"
-                >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 ring-1 ring-blue-100 transition-all duration-200 group-hover:bg-blue-100 group-hover:ring-blue-200">
-                    <Phone className="h-4 w-4" aria-hidden />
-                  </span>
-                  <span className="font-medium">{SITE_CONTACT.phone}</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${SITE_CONTACT.email}`}
-                  className="group inline-flex items-center gap-3 text-sm text-slate-700 transition-colors duration-200 hover:text-blue-700"
-                >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 ring-1 ring-blue-100 transition-all duration-200 group-hover:bg-blue-100 group-hover:ring-blue-200">
-                    <Mail className="h-4 w-4" aria-hidden />
-                  </span>
-                  <span className="break-all font-medium">{SITE_CONTACT.email}</span>
-                </a>
-              </li>
-            </ul>
+            <p className="mt-4 text-sm leading-relaxed text-slate-600">
+              Share your project details and our team will respond via the contact form.
+            </p>
             <Link
               href="/contact"
               className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-md shadow-blue-600/15 transition-colors duration-200 hover:bg-blue-700"

@@ -1,12 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { Mail, Phone } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import * as React from "react";
 import { Suspense } from "react";
 
-import { getContactInquiryFromSlug, SITE_CONTACT } from "@/lib/site";
+import { getContactInquiryFromSlug } from "@/lib/site";
 
 const CONTACT_IMAGE = "/images/pharma-contact.png";
 
@@ -42,45 +41,6 @@ const inputClassName =
 type SubmitStatus = "idle" | "submitting" | "success" | "error";
 
 const SUBMIT_TIMEOUT_MS = 30_000;
-
-function ContactCallBar() {
-  return (
-    <div
-      className="mb-8 flex flex-col gap-4 rounded-2xl border border-blue-200/80 bg-gradient-to-br from-blue-50 to-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6"
-      role="region"
-      aria-label="Contact by phone or email"
-    >
-      <div className="flex items-start gap-4">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/25">
-          <Phone className="h-5 w-5" aria-hidden />
-        </span>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
-            Speak with our team
-          </p>
-          <p className="mt-1 text-lg font-semibold text-slate-900">{SITE_CONTACT.phone}</p>
-          <p className="mt-0.5 text-sm text-slate-600">Available during business hours (IST)</p>
-        </div>
-      </div>
-      <div className="flex flex-wrap gap-3">
-        <a
-          href={`tel:${SITE_CONTACT.phoneTel}`}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition-colors duration-200 hover:bg-blue-700"
-        >
-          <Phone className="h-4 w-4" aria-hidden />
-          Call now
-        </a>
-        <a
-          href={`mailto:${SITE_CONTACT.email}`}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800"
-        >
-          <Mail className="h-4 w-4" aria-hidden />
-          Email us
-        </a>
-      </div>
-    </div>
-  );
-}
 
 function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
   const searchParams = useSearchParams();
@@ -212,7 +172,6 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
         className={`order-2 flex flex-col justify-center bg-slate-50 px-4 py-10 sm:px-6 sm:py-12 md:px-10 lg:order-1 lg:px-12 lg:py-16 xl:px-16 ${sectionHeight}`}
       >
         <div className="mx-auto w-full max-w-xl">
-          <ContactCallBar />
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
             Contact
           </p>
@@ -258,22 +217,6 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
                 >
                   Send another inquiry
                 </button>
-                <p className="text-xs text-slate-500">
-                  Direct line:{" "}
-                  <a
-                    className="font-medium text-blue-600 underline-offset-2 transition hover:text-blue-700 hover:underline"
-                    href={`mailto:${SITE_CONTACT.email}`}
-                  >
-                    {SITE_CONTACT.email}
-                  </a>{" "}
-                  ·{" "}
-                  <a
-                    className="font-medium text-blue-600 underline-offset-2 transition hover:text-blue-700 hover:underline"
-                    href={`tel:${SITE_CONTACT.phoneTel}`}
-                  >
-                    {SITE_CONTACT.phone}
-                  </a>
-                </p>
               </div>
             ) : (
               <form
