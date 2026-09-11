@@ -1,71 +1,55 @@
 import { NextResponse } from "next/server";
 
-import { getResendClient, getResendDefaults } from "@/lib/resend";
+import { validateRfqSubmission } from "@/lib/inquiries";
+import { takeSubmissionSlot } from "@/lib/rate-limit";
+import { readLimitedBody } from "@/lib/request-body";
+import { sendRfqNotification } from "@/lib/resend";
 
-function pick(fd: FormData, key: string) {
-  const v = fd.get(key);
-  if (typeof v !== "string") return "";
-  return v.trim();
-}
+const MAX_BODY_BYTES = 20_000;
 
 export async function POST(req: Request) {
   try {
-    const fd = await req.formData().catch(() => null);
-    if (!fd) {
-      return NextResponse.json({ ok: false, error: "Invalid form data." }, { status: 400 });
+    const contentType = req.headers.get("content-type")?.toLowerCase() ?? "";
+    if (!contentType.includes("multipart/form-data") && !contentType.includes("application/x-www-form-urlencoded")) {
+      return NextResponse.json({ ok: false, error: "Invalid request format." }, { status: 400 });
+    }
+    const bytes = await readLimitedBody(req, MAX_BODY_BYTES);
+    if (!bytes) {
+      return NextResponse.json({ ok: false, error: "Request is too large." }, { status: 413 });
     }
 
-    // honeypot
-    if (pick(fd, "_gotcha")) {
+    const formData = await new Response(bytes, { headers: { "content-type": contentType } }).formData().catch(() => null);
+    if (!formData) {
+      return NextResponse.json({ ok: false, error: "Invalid request format." }, { status: 400 });
+    }
+    const input = Object.fromEntries(formData.entries());
+    if (typeof input._gotcha === "string" && input._gotcha.trim()) {
       return NextResponse.json({ ok: true });
     }
 
-    const createdAt = new Date().toISOString();
+    const limit = takeSubmissionSlot(req, "rfq");
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { ok: false, error: "Too many submissions. Please try again shortly." },
+        { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } },
+      );
+    }
 
-    const name = pick(fd, "name");
-    const email = pick(fd, "email");
-    const company = pick(fd, "company");
-    const phone = pick(fd, "phone");
-    const dosageForm = pick(fd, "dosage_form");
-    const projectStage = pick(fd, "project_stage");
-    const targetMarkets = pick(fd, "target_markets");
-    const timeline = pick(fd, "timeline");
-    const requirements = pick(fd, "requirements");
+    const validated = validateRfqSubmission(input);
+    if (!validated.ok) {
+      return NextResponse.json(
+        { ok: false, error: "Please correct the highlighted fields.", errors: validated.errors },
+        { status: 400 },
+      );
+    }
 
-    const resend = getResendClient();
-    const { from, to } = getResendDefaults();
-
-    await resend.emails.send({
-      from,
-      to,
-      subject: "Noralix Labs — RFQ submission",
-      replyTo: email ? [email] : undefined,
-      text: [
-        "New RFQ submission",
-        "",
-        `Name: ${name || "-"}`,
-        `Email: ${email || "-"}`,
-        `Company: ${company || "-"}`,
-        `Phone: ${phone || "-"}`,
-        "",
-        `Dosage form: ${dosageForm || "-"}`,
-        `Project stage: ${projectStage || "-"}`,
-        `Target markets: ${targetMarkets || "-"}`,
-        `Desired timeline: ${timeline || "-"}`,
-        "",
-        "Brief requirements:",
-        requirements || "-",
-        "",
-        `Created at: ${createdAt}`,
-      ].join("\n"),
-    });
-
+    await sendRfqNotification(validated.data, new Date());
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (error) {
+    console.error("[rfq] notification submission failed", error instanceof Error ? error.message : "unknown error");
     return NextResponse.json(
-      { ok: false, error: "Server error." },
-      { status: 500 }
+      { ok: false, error: "Something went wrong while submitting your inquiry. Please try again." },
+      { status: 500 },
     );
   }
 }
-

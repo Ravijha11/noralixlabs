@@ -11,11 +11,16 @@ export function FormStatus({
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [error, setError] = React.useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
+  const isSubmittingRef = React.useRef(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
     setState("submitting");
     setError(null);
+    setFieldErrors({});
 
     const form = e.currentTarget;
     const action = form.action;
@@ -29,11 +34,13 @@ export function FormStatus({
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        setError(
-          data?.errors?.[0]?.message ??
-            "Submission failed. Please try again."
-        );
+        const data = (await res.json().catch(() => null)) as {
+          error?: string;
+          errors?: Record<string, string>;
+        } | null;
+        const errors = data?.errors ?? {};
+        setFieldErrors(errors);
+        setError(data?.error ?? Object.values(errors)[0] ?? "Submission failed. Please try again.");
         setState("error");
         return;
       }
@@ -43,9 +50,11 @@ export function FormStatus({
     } catch {
       setError("Submission failed. Please try again.");
       setState("error");
+    } finally {
+      isSubmittingRef.current = false;
     }
   }
 
-  return { state, error, onSubmit, successMessage } as const;
+  return { state, error, fieldErrors, onSubmit, successMessage } as const;
 }
 

@@ -1,5 +1,8 @@
 import { Resend } from "resend";
 
+import { renderContactNotification, renderRfqNotification } from "@/emails/inquiry-notification";
+import type { ContactSubmission, RfqSubmission } from "@/lib/inquiries";
+
 function requiredEnv(name: string) {
   const value = process.env[name];
   if (!value) throw new Error(`Missing env var: ${name}`);
@@ -22,54 +25,32 @@ export function getResendDefaults() {
   };
 }
 
-export type ContactNotificationPayload = {
-  name: string;
-  company: string;
-  email: string;
-  interest: string;
-  projectStage: string;
-  message: string;
-};
-
-export function sendContactNotification(payload: ContactNotificationPayload) {
+async function sendNotification(subject: string, notification: { html: string; text: string }, replyTo?: string) {
   const resend = getResendClient();
   const { from, to } = getResendDefaults();
-  const createdAt = new Date().toISOString();
-  const { name, company, email, interest, projectStage, message } = payload;
-
-  return resend.emails.send({
+  const response = await resend.emails.send({
     from,
     to,
-    subject: "Noralix Labs — Contact form",
-    replyTo: email ? [email] : undefined,
-    text: [
-      "New contact form submission",
-      "",
-      `Name: ${name || "-"}`,
-      `Company: ${company || "-"}`,
-      `Email: ${email || "-"}`,
-      `Service interest: ${interest || "-"}`,
-      `Project stage: ${projectStage || "-"}`,
-      "",
-      "Message:",
-      message || "-",
-      "",
-      `Created at: ${createdAt}`,
-    ].join("\n"),
+    subject,
+    replyTo: replyTo ? [replyTo] : undefined,
+    html: notification.html,
+    text: notification.text,
   });
+  if (response.error) throw new Error(`Resend rejected notification: ${response.error.name}`);
 }
 
-/** Send email after the HTTP response (Vercel waitUntil or local background). */
-export async function runAfterResponse(work: Promise<unknown>) {
-  const tracked = work.catch((err) => {
-    console.error("[resend] background send failed:", err);
-  });
+export function sendContactNotification(payload: ContactSubmission, createdAt: Date) {
+  return sendNotification(
+    "New Contact Submission — Noralix Labs",
+    renderContactNotification({ ...payload, createdAt }),
+    payload.email || undefined,
+  );
+}
 
-  if (process.env.VERCEL) {
-    const { waitUntil } = await import("@vercel/functions");
-    waitUntil(tracked);
-    return;
-  }
-
-  void tracked;
+export function sendRfqNotification(payload: RfqSubmission, createdAt: Date) {
+  return sendNotification(
+    "New RFQ Submission — Noralix Labs",
+    renderRfqNotification({ ...payload, createdAt }),
+    payload.email || undefined,
+  );
 }

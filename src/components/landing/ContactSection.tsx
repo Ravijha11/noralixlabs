@@ -6,28 +6,9 @@ import * as React from "react";
 import { Suspense } from "react";
 
 import { getContactInquiryFromSlug } from "@/lib/site";
+import { CONTACT_PROJECT_STAGES, CONTACT_SERVICE_INTERESTS } from "@/lib/inquiries";
 
 const CONTACT_IMAGE = "/images/pharma-contact.png";
-
-const PROJECT_STAGES = [
-  "Early Development",
-  "Formulation Optimization",
-  "Analytical Validation",
-  "Stability Studies",
-  "Regulatory Filing",
-  "Technology Transfer",
-  "Not Sure Yet",
-] as const;
-
-const SERVICE_INTERESTS = [
-  "Formulation development",
-  "Analytical methods",
-  "Packaging compatibility",
-  "Stability studies",
-  "Regulatory filing",
-  "Technology transfer",
-  "Not sure yet",
-] as const;
 
 const TRUST_BADGES = [
   "ICH-aligned development",
@@ -36,7 +17,7 @@ const TRUST_BADGES = [
 ] as const;
 
 const inputClassName =
-  "h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 shadow-sm outline-none transition duration-200 placeholder:text-slate-400 hover:border-blue-200 focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500/25";
+  "h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 shadow-sm outline-none transition duration-200 placeholder:text-slate-400 hover:border-blue-200 focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500/25 aria-[invalid=true]:border-red-500";
 
 type SubmitStatus = "idle" | "submitting" | "success" | "error";
 
@@ -61,6 +42,7 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
   }, [searchParams]);
   const [status, setStatus] = React.useState<SubmitStatus>("idle");
   const [error, setError] = React.useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
   const isSubmittingRef = React.useRef(false);
 
   const isSubmitting = status === "submitting";
@@ -76,6 +58,7 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
     isSubmittingRef.current = true;
     setStatus("submitting");
     setError(null);
+    setFieldErrors({});
 
     const form = e.currentTarget;
     const fd = new FormData(form);
@@ -83,6 +66,7 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
     const payload = {
       name: String(fd.get("name") ?? ""),
       company: String(fd.get("company") ?? ""),
+      phone: String(fd.get("phone") ?? ""),
       email: String(fd.get("email") ?? ""),
       interest: String(fd.get("interest") ?? ""),
       projectStage: String(fd.get("projectStage") ?? ""),
@@ -99,11 +83,13 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
       });
       const data = (await res.json().catch(() => null)) as
         | { ok: true }
-        | { ok: false; error?: string }
+        | { ok: false; error?: string; errors?: Record<string, string> }
         | null;
 
       if (!res.ok || !data?.ok) {
-        setError((data && "error" in data && data.error) || "Failed to submit.");
+        const errors = data && "errors" in data ? data.errors ?? {} : {};
+        setFieldErrors(errors);
+        setError((data && "error" in data && data.error) || Object.values(errors)[0] || "Something went wrong while submitting your inquiry. Please try again.");
         setStatus("error");
         return;
       }
@@ -206,7 +192,7 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
                   <div>
                     <p className="text-lg font-semibold text-slate-900">Message received</p>
                     <p className="text-sm text-slate-600">
-                      We&apos;ll be in touch within one business day.
+                      Thank you. Your RFQ has been submitted successfully. Our pharmaceutical development team will contact you shortly.
                     </p>
                   </div>
                 </div>
@@ -234,10 +220,14 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
                       name="name"
                       type="text"
                       required
+                      maxLength={80}
+                      aria-invalid={Boolean(fieldErrors.name)}
+                      aria-describedby={fieldErrors.name ? "contact-name-error" : undefined}
                       autoComplete="name"
                       className={inputClassName}
                       placeholder="Your full name"
                     />
+                    {fieldErrors.name ? <span id="contact-name-error" className="text-sm text-red-700">{fieldErrors.name}</span> : null}
                   </label>
                   <label className="grid gap-2" htmlFor="contact-company">
                     <span className="text-sm font-medium text-slate-800">Company</span>
@@ -246,26 +236,31 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
                       name="company"
                       type="text"
                       autoComplete="organization"
+                      maxLength={120}
+                      aria-invalid={Boolean(fieldErrors.company)}
+                      aria-describedby={fieldErrors.company ? "contact-company-error" : undefined}
                       className={inputClassName}
                       placeholder="Organization"
                     />
+                    {fieldErrors.company ? <span id="contact-company-error" className="text-sm text-red-700">{fieldErrors.company}</span> : null}
                   </label>
                 </div>
 
-                <label className="grid gap-2" htmlFor="contact-email">
-                  <span className="text-sm font-medium text-slate-800">
-                    Email <span className="text-blue-600">*</span>
-                  </span>
-                  <input
-                    id="contact-email"
-                    name="email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    className={inputClassName}
-                    placeholder="you@company.com"
-                  />
-                </label>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <label className="grid gap-2" htmlFor="contact-phone">
+                    <span className="text-sm font-medium text-slate-800">Phone Number <span className="text-blue-600">*</span></span>
+                    <div className="relative">
+                      <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-500" aria-hidden="true">+91</span>
+                      <input id="contact-phone" name="phone" type="tel" required inputMode="tel" autoComplete="tel-national" maxLength={20} aria-invalid={Boolean(fieldErrors.phone)} aria-describedby={fieldErrors.phone ? "contact-phone-error" : undefined} className={`${inputClassName} pl-12`} placeholder="98765 43210" />
+                    </div>
+                    {fieldErrors.phone ? <span id="contact-phone-error" className="text-sm text-red-700">{fieldErrors.phone}</span> : null}
+                  </label>
+                  <label className="grid gap-2" htmlFor="contact-email">
+                    <span className="text-sm font-medium text-slate-800">Email (Optional)</span>
+                    <input id="contact-email" name="email" type="email" autoComplete="email" maxLength={254} aria-invalid={Boolean(fieldErrors.email)} aria-describedby={fieldErrors.email ? "contact-email-error" : undefined} className={inputClassName} placeholder="you@company.com" />
+                    {fieldErrors.email ? <span id="contact-email-error" className="text-sm text-red-700">{fieldErrors.email}</span> : null}
+                  </label>
+                </div>
 
                 <div className="grid gap-5 sm:grid-cols-2">
                   <label className="grid gap-2" htmlFor="contact-project-stage">
@@ -276,18 +271,21 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
                       id="contact-project-stage"
                       name="projectStage"
                       required
+                      aria-invalid={Boolean(fieldErrors.projectStage)}
+                      aria-describedby={fieldErrors.projectStage ? "contact-project-stage-error" : undefined}
                       defaultValue=""
                       className={`${inputClassName} cursor-pointer`}
                     >
                       <option value="" disabled>
                         Select stage…
                       </option>
-                      {PROJECT_STAGES.map((stage) => (
+                      {CONTACT_PROJECT_STAGES.map((stage) => (
                         <option key={stage} value={stage}>
                           {stage}
                         </option>
                       ))}
                     </select>
+                    {fieldErrors.projectStage ? <span id="contact-project-stage-error" className="text-sm text-red-700">{fieldErrors.projectStage}</span> : null}
                   </label>
 
                   <label className="grid gap-2" htmlFor="contact-interest">
@@ -298,17 +296,20 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
                       id="contact-interest"
                       name="interest"
                       defaultValue=""
+                      aria-invalid={Boolean(fieldErrors.interest)}
+                      aria-describedby={fieldErrors.interest ? "contact-interest-error" : undefined}
                       className={`${inputClassName} cursor-pointer`}
                     >
                       <option value="" disabled>
                         Select service…
                       </option>
-                      {SERVICE_INTERESTS.map((service) => (
+                      {CONTACT_SERVICE_INTERESTS.map((service) => (
                         <option key={service} value={service}>
                           {service}
                         </option>
                       ))}
                     </select>
+                    {fieldErrors.interest ? <span id="contact-interest-error" className="text-sm text-red-700">{fieldErrors.interest}</span> : null}
                   </label>
                 </div>
 
@@ -321,10 +322,15 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
                     id="contact-message"
                     name="message"
                     required
+                    minLength={10}
+                    maxLength={4000}
+                    aria-invalid={Boolean(fieldErrors.message)}
+                    aria-describedby={fieldErrors.message ? "contact-message-error" : undefined}
                     rows={5}
                     className={`${inputClassName} min-h-36 resize-y py-3`}
                     placeholder="Dosage form, development stage, timelines, and regulatory target markets."
                   />
+                  {fieldErrors.message ? <span id="contact-message-error" className="text-sm text-red-700">{fieldErrors.message}</span> : null}
                 </label>
 
                 <input
@@ -340,6 +346,7 @@ function ContactSectionInner({ standalone = false }: { standalone?: boolean }) {
                   type="submit"
                   aria-busy={isSubmitting}
                   aria-disabled={isSubmitting}
+                  disabled={isSubmitting}
                   className={`relative inline-flex h-12 min-h-12 w-full items-center justify-center overflow-hidden rounded-xl bg-blue-600 px-6 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition-[background-color,box-shadow,transform] duration-300 ease-out hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 sm:w-auto sm:min-w-[11rem] ${
                     isSubmitting
                       ? "pointer-events-none cursor-wait scale-[0.99] bg-blue-700"
